@@ -19,4 +19,15 @@
   color: #2c3e50;
   margin-bottom: 1rem;
   text-align: center;
+}
+
+.audio-player {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.audio-player audio {
+  width: 100%;
+  max-width: 500px;
 } 

@@ -7,7 +7,10 @@ export const generateStory = async (heroNames) => {
       throw new Error('Failed to generate story');
     }
     const data = await response.json();
-    return data.story.story;
+    return {
+      text: data.story.story,
+      audioUrl: data.story.audioUrl
+    };
   } catch (error) {
     console.error('Error in generateStory:', error);
     throw error;

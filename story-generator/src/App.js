@@ -7,7 +7,7 @@ import './App.css';
 
 function App() {
   const [selectedHeroes, setSelectedHeroes] = useState([]);
-  const [story, setStory] = useState('');
+  const [story, setStory] = useState({ text: '', audioUrl: '' });
   const [loading, setLoading] = useState(false);
 
   const handleHeroSelect = (hero) => {
@@ -27,8 +27,8 @@ function App() {
     setLoading(true);
     try {
       const heroNames = selectedHeroes.map(hero => hero.name).join(',');
-      const generatedStory = await generateStory(heroNames);
-      setStory(generatedStory);
+      const { text, audioUrl } = await generateStory(heroNames);
+      setStory({ text, audioUrl });
     } catch (error) {
       alert('Failed to generate story. Please try again.');
     } finally {
@@ -56,8 +56,8 @@ function App() {
       </div>
       
       <main>
-        <Story story={story} />
-        {!story && (
+        <Story story={story.text} audioUrl={story.audioUrl} />
+        {!story.text && (
           <HeroList 
             heroes={heroes}
             selectedHeroes={selectedHeroes}
