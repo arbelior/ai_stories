@@ -7,7 +7,7 @@ const Story = ({ story, audioUrl }) => {
   useEffect(() => {
     if (audioRef.current && audioUrl) {
       audioRef.current.play().catch(error => {
-        console.error("Audio autoplay failed:", error);
+        console.error("נכשלה הפעלה אוטומטית של השמע:", error);
       });
     }
   }, [audioUrl]);
@@ -16,7 +16,7 @@ const Story = ({ story, audioUrl }) => {
 
   return (
     <div className="story-container">
-      <h2>Your Generated Story</h2>
+      <h2>הסיפור שלך</h2>
       <div className="story-text">
         {story}
       </div>
@@ -27,7 +27,7 @@ const Story = ({ story, audioUrl }) => {
             controls 
             src={audioUrl}
           >
-            Your browser does not support the audio element.
+            הדפדפן שלך אינו תומך בהשמעת שמע.
           </audio>
         </div>
       )}

@@ -1,4 +1,6 @@
 .story-container {
+  direction: rtl;
+  text-align: right;
   background-color: white;
   border-radius: 8px;
   padding: 2rem;
@@ -18,7 +20,7 @@
 .story-container h2 {
   color: #2c3e50;
   margin-bottom: 1rem;
-  text-align: center;
+  text-align: right;
 }
 
 .audio-player {

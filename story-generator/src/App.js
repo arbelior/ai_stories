@@ -20,14 +20,13 @@ function App() {
 
   const handleGenerateStory = async () => {
     if (story.text) {
-      // Reset everything for a new story
       setStory({ text: '', audioUrl: '' });
       setSelectedHeroes([]);
       return;
     }
 
     if (selectedHeroes.length === 0) {
-      alert('Please select at least one hero!');
+      alert('אנא בחר לפחות גיבור אחד!');
       return;
     }
 
@@ -37,7 +36,7 @@ function App() {
       const { text, audioUrl } = await generateStory(heroNames);
       setStory({ text, audioUrl });
     } catch (error) {
-      alert('Failed to generate story. Please try again.');
+      alert('נכשל ביצירת הסיפור. אנא נסה שוב.');
     } finally {
       setLoading(false);
     }
@@ -47,9 +46,9 @@ function App() {
     <div className="App">
       <div className="app-top-section">
         <header className="app-header">
-          <h1>Story Generator</h1>
+          <h1>מחולל הסיפורים</h1>
           <div className="hero-counter">
-            Selected Heroes: {selectedHeroes.length}/4
+            גיבורים שנבחרו: {selectedHeroes.length}/4
           </div>
         </header>
         
@@ -58,7 +57,7 @@ function App() {
           onClick={handleGenerateStory}
           disabled={loading}
         >
-          {loading ? 'Generating...' : story.text ? 'New Story' : 'Generate Story'}
+          {loading ? 'יוצר סיפור...' : story.text ? 'סיפור חדש' : 'צור סיפור'}
         </button>
       </div>
       
