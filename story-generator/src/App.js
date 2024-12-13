@@ -57,11 +57,13 @@ function App() {
       
       <main>
         <Story story={story} />
-        <HeroList 
-          heroes={heroes}
-          selectedHeroes={selectedHeroes}
-          onHeroSelect={handleHeroSelect}
-        />
+        {!story && (
+          <HeroList 
+            heroes={heroes}
+            selectedHeroes={selectedHeroes}
+            onHeroSelect={handleHeroSelect}
+          />
+        )}
       </main>
     </div>
   );
