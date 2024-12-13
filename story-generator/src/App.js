@@ -19,6 +19,13 @@ function App() {
   };
 
   const handleGenerateStory = async () => {
+    if (story.text) {
+      // Reset everything for a new story
+      setStory({ text: '', audioUrl: '' });
+      setSelectedHeroes([]);
+      return;
+    }
+
     if (selectedHeroes.length === 0) {
       alert('Please select at least one hero!');
       return;
@@ -49,9 +56,9 @@ function App() {
         <button 
           className="generate-button"
           onClick={handleGenerateStory}
-          disabled={selectedHeroes.length === 0 || loading}
+          disabled={loading}
         >
-          {loading ? 'Generating...' : 'Generate Story'}
+          {loading ? 'Generating...' : story.text ? 'New Story' : 'Generate Story'}
         </button>
       </div>
       
