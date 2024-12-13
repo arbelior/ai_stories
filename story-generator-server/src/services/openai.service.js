@@ -1,4 +1,5 @@
 const OpenAI = require('openai');
+const fs = require('fs');
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -8,7 +9,7 @@ exports.generateStoryWithOpenAI = async (names) => {
   try {
     console.log('Attempting to generate story with names:', names);
     
-    const prompt = `Create a story for 8 years old kid with the following heroes: ${names.join(', ')}`;
+    const prompt = `Create a story 20 words long for 8 years old kid with the following heroes: ${names.join(', ')}`;
     
     console.log('Using prompt:', prompt);
 
@@ -35,11 +36,38 @@ exports.generateStoryWithOpenAI = async (names) => {
       presence_penalty: 0
     });
 
-    console.log('OpenAI Response:', response.choices[0].message);
+    const storyText = response.choices[0].message.content;
+    console.log('OpenAI Response:', storyText);
     
-    return response.choices[0].message.content;
+    // Generate audio from the story
+    const audioBuffer = await generateAudio(storyText);
+    
+    return {
+      text: storyText,
+      audio: audioBuffer
+    };
   } catch (error) {
     console.error('OpenAI API Error:', error);
     throw new Error(`Failed to generate story with OpenAI: ${error.message}`);
   }
 }; 
+
+async function generateAudio(text) {
+  try {
+    const mp3 = await openai.audio.speech.create({
+      model: "tts-1",
+      voice: "alloy",
+      input: text,
+    });
+
+    // Convert the response to an audio buffer
+    const audioBuffer = await mp3.arrayBuffer();
+    // Convert array buffer to Buffer
+    const buffer = Buffer.from(audioBuffer);
+    
+    return buffer;
+  } catch (error) {
+    console.error('Text-to-Speech Error:', error);
+    throw new Error(`Failed to generate audio: ${error.message}`);
+  }
+} 
