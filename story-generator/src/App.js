@@ -3,12 +3,18 @@ import HeroList from './components/HeroList/HeroList';
 import Story from './components/Story/Story';
 import { generateStory } from './services/storyService';
 import heroes from './data/heroes';
+import WelcomePage from './components/WelcomePage/WelcomePage';
 import './App.css';
 
 function App() {
   const [selectedHeroes, setSelectedHeroes] = useState([]);
   const [story, setStory] = useState({ text: '', audioUrl: '' });
   const [loading, setLoading] = useState(false);
+  const [userParams, setUserParams] = useState(null);
+
+  const handleStart = (params) => {
+    setUserParams(params);
+  };
 
   const handleHeroSelect = (hero) => {
     if (selectedHeroes.find(h => h.id === hero.id)) {
@@ -33,7 +39,7 @@ function App() {
     setLoading(true);
     try {
       const heroNames = selectedHeroes.map(hero => hero.name).join(',');
-      const { text, audioUrl } = await generateStory(heroNames);
+      const { text, audioUrl } = await generateStory(heroNames, userParams.gender, userParams.ageRange);
       setStory({ text, audioUrl });
     } catch (error) {
       alert('נכשל ביצירת הסיפור. אנא נסה שוב.');
@@ -41,6 +47,10 @@ function App() {
       setLoading(false);
     }
   };
+
+  if (!userParams) {
+    return <WelcomePage onStart={handleStart} />;
+  }
 
   return (
     <div className="App">

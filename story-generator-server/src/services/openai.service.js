@@ -9,7 +9,7 @@ exports.generateStoryWithOpenAI = async (names) => {
   try {
     console.log('Attempting to generate story with names:', names);
     
-    const prompt = `Create a story 20 words long for 8 years old kid with the following heroes: ${names.join(', ')}`;
+    const prompt = `Create a story 20 words  long  in hebrewfor 8 years old kid with the following heroes: ${names.join(', ')}`;
     
     console.log('Using prompt:', prompt);
 
