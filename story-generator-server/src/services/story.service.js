@@ -1,16 +1,22 @@
+const openaiService = require('./openai.service');
+
 exports.createStory = async (names) => {
   try {
-    // Here you'll implement the AI integration
-    // For now, we'll return a placeholder
     const prompt = `Create a story about four friends named ${names.join(', ')}.`;
+    const generatedStory = await openaiService.generateStoryWithOpenAI(names);
     
-    // TODO: Implement AI service integration
+    if (!generatedStory) {
+      throw new Error('No story was generated');
+    }
+
+    console.log('Generated Story:', generatedStory);
+
     return {
       prompt,
-      // This is where you'll add the AI-generated story
-      story: "AI-generated story will go here"
+      story: generatedStory
     };
   } catch (error) {
-    throw new Error('Failed to create story');
+    console.error('Story Service Error:', error);
+    throw new Error(`Failed to create story: ${error.message}`);
   }
 }; 

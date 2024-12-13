@@ -3,6 +3,7 @@ const storyService = require('../services/story.service');
 exports.generateStory = async (req, res) => {
   try {
     // Get names from query parameters
+    console.log('Request received:', req.query);
     const namesString = req.query.names;
     
     if (!namesString) {
