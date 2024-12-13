@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import HeroList from './components/HeroList/HeroList';
+import Story from './components/Story/Story';
+import { generateStory } from './services/storyService';
 import heroes from './data/heroes';
 import './App.css';
 
 function App() {
   const [selectedHeroes, setSelectedHeroes] = useState([]);
+  const [story, setStory] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleHeroSelect = (hero) => {
     if (selectedHeroes.find(h => h.id === hero.id)) {
@@ -14,13 +18,22 @@ function App() {
     }
   };
 
-  const handleGenerateStory = () => {
+  const handleGenerateStory = async () => {
     if (selectedHeroes.length === 0) {
       alert('Please select at least one hero!');
       return;
     }
-    // Story generation logic will go here
-    console.log('Generating story with:', selectedHeroes);
+
+    setLoading(true);
+    try {
+      const heroNames = selectedHeroes.map(hero => hero.name).join(',');
+      const generatedStory = await generateStory(heroNames);
+      setStory(generatedStory);
+    } catch (error) {
+      alert('Failed to generate story. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,13 +49,14 @@ function App() {
         <button 
           className="generate-button"
           onClick={handleGenerateStory}
-          disabled={selectedHeroes.length === 0}
+          disabled={selectedHeroes.length === 0 || loading}
         >
-          Generate Story
+          {loading ? 'Generating...' : 'Generate Story'}
         </button>
       </div>
       
       <main>
+        <Story story={story} />
         <HeroList 
           heroes={heroes}
           selectedHeroes={selectedHeroes}
