@@ -5,52 +5,96 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-exports.generateStoryWithOpenAI = async (names) => {
+exports.generateStoryWithOpenAI = async (names, gender = 'neutral', ageRange = '7-9') => {
   try {
-    console.log('Attempting to generate story with names:', names);
+    console.log('OpenAI Service - Starting generation with:', { names, gender, ageRange });
     
-    const prompt = `Create a story 20 words  long  in hebrewfor 8 years old kid with the following heroes: ${names.join(', ')}`;
-    
-    console.log('Using prompt:', prompt);
+    if (!names || !Array.isArray(names)) {
+      throw new Error('Names must be provided as an array');
+    }
+
+    const prompt = createAgeAppropriatePrompt(names, gender, ageRange);
+    console.log('Generated prompt:', prompt);
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4",
       messages: [
         {
           "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": prompt
-            }
-          ]
+          "content": prompt
         }
       ],
-      response_format: {
-        "type": "text"
-      },
-      temperature: 1,
+      temperature: 0.8,
       max_tokens: 2048,
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0
     });
 
+    if (!response.choices || response.choices.length === 0) {
+      throw new Error('OpenAI returned no choices in response');
+    }
+
     const storyText = response.choices[0].message.content;
-    console.log('OpenAI Response:', storyText);
+    console.log('OpenAI Response received:', storyText);
     
-    // Generate audio from the story
     const audioBuffer = await generateAudio(storyText);
+    console.log('Audio generated successfully');
     
     return {
       text: storyText,
       audio: audioBuffer
     };
   } catch (error) {
-    console.error('OpenAI API Error:', error);
-    throw new Error(`Failed to generate story with OpenAI: ${error.message}`);
+    console.error('OpenAI Service Error:', {
+      message: error.message,
+      stack: error.stack,
+      response: error.response?.data
+    });
+    throw error;
   }
-}; 
+};
+
+function createAgeAppropriatePrompt(names, gender = 'neutral', ageRange = '7-9') {
+  try {
+    console.log('Creating prompt for:', { names, gender, ageRange });
+    
+    // Default age range if not provided
+    const [minAge, maxAge] = (ageRange || '7-9').split('-').map(Number);
+    
+    let prompt = `צור סיפור בעברית שהוא`;
+
+    if (minAge <= 6) {
+      prompt += ` פשוט ועדין מאוד, עם אוצר מילים בסיסי`;
+    } else if (minAge <= 9) {
+      prompt += ` מעניין והרפתקני, עם לקחים מוסריים ברורים`;
+    } else {
+      prompt += ` מורכב ומעניין יותר, עם התפתחות דמויות`;
+    }
+
+    if (gender === 'girl') {
+      prompt += `, עם דמויות נשיות חזקות ונושאים שמעצימים ילדות צעירות`;
+    } else if (gender === 'boy') {
+      prompt += `, עם דמויות גבריות חיוביות ונושאים של חברות ואומץ`;
+    }
+
+    prompt += `. הסיפור צריך להיות באורך של כ-20 מילים ולכלול את הדמויות הבאות: ${names.join(', ')}.`;
+
+    if (minAge <= 6) {
+      prompt += ` כלול נושאים של חברות, שיתוף וטוב לב.`;
+    } else if (minAge <= 9) {
+      prompt += ` כלול נושאים של עבודת צוות, פתרון בעיות וצמיחה אישית.`;
+    } else {
+      prompt += ` כלול נושאים של אחריות, גילוי עצמי והתגברות על אתגרים.`;
+    }
+
+    console.log('Generated prompt:', prompt);
+    return prompt;
+  } catch (error) {
+    console.error('Error creating prompt:', error);
+    throw error;
+  }
+}
 
 async function generateAudio(text) {
   try {

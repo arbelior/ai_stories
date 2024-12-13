@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import HeroList from './components/HeroList/HeroList';
 import Story from './components/Story/Story';
 import { generateStory } from './services/storyService';
-import heroes from './data/heroes';
+import { getRelevantHeroes } from './data/heroes';
 import WelcomePage from './components/WelcomePage/WelcomePage';
 import './App.css';
 
@@ -11,9 +11,12 @@ function App() {
   const [story, setStory] = useState({ text: '', audioUrl: '' });
   const [loading, setLoading] = useState(false);
   const [userParams, setUserParams] = useState(null);
+  const [availableHeroes, setAvailableHeroes] = useState([]);
 
   const handleStart = (params) => {
     setUserParams(params);
+    const relevantHeroes = getRelevantHeroes(params.gender, params.ageRange);
+    setAvailableHeroes(relevantHeroes);
   };
 
   const handleHeroSelect = (hero) => {
@@ -58,7 +61,7 @@ function App() {
         <header className="app-header">
           <h1>מחולל הסיפורים</h1>
           <div className="hero-counter">
-            גיבורים שנבחרו: {selectedHeroes.length}/4
+            גיבורים שנ��חרו: {selectedHeroes.length}/4
           </div>
         </header>
         
@@ -75,7 +78,7 @@ function App() {
         <Story story={story.text} audioUrl={story.audioUrl} />
         {!story.text && (
           <HeroList 
-            heroes={heroes}
+            heroes={availableHeroes}
             selectedHeroes={selectedHeroes}
             onHeroSelect={handleHeroSelect}
           />
